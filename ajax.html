@@ -1,0 +1,225 @@
+<html>
+<head><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+<button type="button" onclick="loadDoc()" id="butto"  >Get Data from Github</button>
+
+<div id="users" class="container w-50 bg-light border border-secondary p-2 rounded mt-2"></div>
+
+<div id ="button" align="center" style="visibility: hidden;"></div>
+
+
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">REPOSITORY</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" >
+        <span id="repos"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+<script>
+  var butto = document.getElementById('butto');
+var profile=[];
+var id=1;
+var x=0;
+var xhttp = new XMLHttpRequest();
+var xhtt = new XMLHttpRequest(); // Initialize the HTTP request.
+// Track the state changes of the request.
+
+butto.className="btn btn-warning mb-2";
+xhttp.onreadystatechange=function() 
+{
+    // readyState 4 means the request is done.
+    // status 200 is a successful return.
+    if (xhttp.readyState == 4 && xhttp.status == 200) 
+    {
+      //document.getElementById("users").innerHTML = xhttp.responseText; // 'This is the output.'
+      let users = JSON.parse( xhttp.responseText) ;
+      if(Array.isArray( users)  && users.length )
+      {
+        users.forEach(function(user)
+                      {
+                          let node = document.createElement("p");                 // Create a <p> node
+                          let textNode = document.createTextNode("Id : " + user.id +" Name : "+ user.login + " Profile Link : " + user.html_url);         // Create a text node
+                        //  addtolocal(user.id,user.login, user.html_url);
+                         var pro = new Object();
+  pro.pdtid=id;
+  pro.userid=user.id;
+  pro.username=user.login;
+  pro.linkk=user.html_url;
+  
+profile.push(pro);
+storeScoreInLocal(profile);
+id++;
+
+
+                          let imgg = document.createElement('img');
+                          imgg.setAttribute("height","100");
+                          imgg.setAttribute("width","100");
+                          imgg.src=user.avatar_url;
+                          node.appendChild(imgg);
+                          node.appendChild(textNode);                              // Append the text to <p>
+                          document.getElementById("users").appendChild(node);     // Append <p> to <div> with id="users"
+                          
+                          let but = document.createElement('BUTTON');
+                          but.innerHTML="REPOS";
+                          but.setAttribute("id",user.login);
+                          but.addEventListener("click",function(){
+                            loadRepos(but.id);
+                              
+                          });
+                           but.className="btn btn-success mb-2";
+                           but.setAttribute( "data-toggle","modal");
+                           but.setAttribute("data-target","#exampleModalLong");
+                          document.getElementById("users").appendChild(but);
+
+                      });   
+      }
+
+    }
+    else
+    {
+        // An error occurred during the request.
+       console.log(xhttp.status) ;
+    }
+  };
+  var bttn1 = document.createElement('button');
+      bttn1.innerHTML="NEXT";
+      bttn1.className="btn btn-primary mb-2 mx-2 ";
+      button.appendChild(bttn1);
+bttn1.addEventListener("click",function(event){
+document.getElementById("users").innerHTML="";
+x=x+5;
+loadDoc() ;
+});
+
+
+var bttn2 = document.createElement('button');
+      bttn2.innerHTML="PREVIOUS";
+      bttn2.className="btn btn-primary mb-2 mx-2 ";
+      button.appendChild(bttn2);
+
+bttn2.addEventListener("click",function(event){
+document.getElementById("users").innerHTML="";
+x=x-5;
+loadDoc2() ;
+});
+ 
+xhtt.addEventListener("load",function(){ 
+
+    // readyState 4 means the request is done.
+    // status 200 is a successful return.
+    if (xhttp.readyState == 4 && xhttp.status == 200) 
+    {
+
+    let use = JSON.parse( xhtt.responseText) ;
+      if(Array.isArray( use)  && use.length )
+      {
+         var del = document.getElementById("repos").childNodes ;
+                              for(var i= 0 ;i< del.length ;i++)
+                              {
+                                document.getElementById("repos").removeChild(del[i]);
+                              }
+        use.forEach(function(use)
+                      {
+                              // userrepo.remove();
+                             
+
+
+
+
+                       let node = document.createElement('div');
+                     let textNode = document.createTextNode("ID : "+use.id + "NAME : "+use.name + "PROJECT LINK : "+ use.html_url);
+                     node.appendChild(textNode);
+
+                     document.getElementById("repos").appendChild(node);
+                      
+
+                      });
+      }
+
+
+    }
+  });
+
+function loadRepos(id) 
+{
+  xhtt.open("GET", "https://api.github.com/users/"+id+"/repos");
+   xhtt.send();
+}
+
+
+
+function loadDoc() 
+{
+  document.getElementById("button").setAttribute("style","visibility:visible");
+  profile = [];
+  localStorage.profile = JSON.stringify([]);
+  xhttp.open("GET", "https://api.github.com/users?since="+x+"&per_page=5");
+  xhttp.send();
+}
+
+function loadDoc2() 
+{
+  document.getElementById("button").setAttribute("style","visibility:visible");
+  profile = [];
+  localStorage.profile = JSON.stringify([]);
+  xhttp.open("GET", "https://api.github.com/users?since="+x+"&per_page=5");
+  xhttp.send();
+}
+
+// function addtolocal(user.id,user.login, user.html_url)
+// {
+//  var pro = new Object();
+//   pro.pdtid=id;
+//   pro.userid=user.id;
+//   pro.username=user.login;
+//   pro.linkk=user.html_url;
+  
+// profile.push(pro);
+// storeScoreInLocal(profile);
+// id++;
+
+// }
+
+
+
+
+function storeScoreInLocal(profile){
+    localStorage.profile = JSON.stringify(profile);
+}
+
+</script>
+
+</body>
+</html>
